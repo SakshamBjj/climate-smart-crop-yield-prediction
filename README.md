@@ -59,4 +59,3 @@ critical resolution for policy planning and agricultural decision-making.
 - Research and evaluation complete
 - Dataset creation and methodology documented
 - Patent filing in progress
-# climate-smart-crop-yield-prediction
