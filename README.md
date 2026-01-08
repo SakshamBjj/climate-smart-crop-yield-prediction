@@ -1,10 +1,17 @@
 # Climate-Smart Crop Yield Prediction System
 
-⚠️ **Source Code Notice**  
-The implementation code for this project is not publicly available due to an ongoing
-patent filing. This repository documents the **system design, modeling decisions,
-experiments, and results** to demonstrate applied machine learning and data
-engineering depth.
+## Intellectual Property Notice
+
+This work is the subject of a **published patent application**:
+
+**Title:** Deep Fusion Neural Network System for Crop Yield Prediction  
+**Applicants:** Vellore Institute of Technology  
+**Inventors:** Dr. Jayakumar K, Saksham Bajaj, Rishabhraj Srivastava, Harshit Vijay Kumar  
+**Publication Date:** December 12, 2025  
+**Jurisdiction:** India
+
+To protect intellectual property during examination, the source code is not publicly released.
+This repository documents the system design, modeling rationale, and experimental outcomes.
 
 ---
 
@@ -58,4 +65,4 @@ critical resolution for policy planning and agricultural decision-making.
 
 - Research and evaluation complete
 - Dataset creation and methodology documented
-- Patent filing in progress
+- Patent application published in the Indian Patent Office Journal (Dec 2025)
