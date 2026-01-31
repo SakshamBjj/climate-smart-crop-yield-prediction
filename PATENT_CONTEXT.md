@@ -1,490 +1,202 @@
-# Patent Information and Intellectual Property
+# Patent & IP Context
 
-## Published Patent Application
+## Patent Status
 
 **Application Number:** 202541116475 A  
 **Title:** Deep Fusion Neural Network System for Crop Yield Prediction  
-**Publication Date:** December 12, 2025  
-**Publication Journal:** The Patent Office Journal No. 50/2025  
-**Status:** Published, Under Examination  
-**Expected Grant:** 18-24 months from filing (typical timeline)
-
+**Status:** Published (December 12, 2025) – Under Examination  
+**Jurisdiction:** India  
 **Applicant:** Vellore Institute of Technology  
-**Inventors:**
-1. Dr. Jayakumar K (Supervisor, Associate Professor Sr., VIT SCOPE)
-2. Saksham Bajaj (Lead Developer, BTech CSE 2021-2025)
-3. Rishabhraj Srivastava (Co-Developer, BTech CSE 2021-2025)
-4. Harshit Vijay Kumar (Co-Developer, BTech CSE 2021-2025)
+**Inventors:** Dr. Jayakumar K, Saksham Bajaj, Rishabhraj Srivastava, Harshit Vijay Kumar
 
-**Jurisdiction:** India (International Classification: G01S 19/08, G06Q 30/0201, G01S 19/04, G01S 19/05, H04M 1/2753)
+**Public Record:** [IP India Patent Search](https://ipindiaonline.gov.in/patentsearch/)
 
 ---
 
-## What Is Patented?
+## Code & Data Availability
 
-### Patent Scope (From Abstract)
+### What's Public (This Repository)
 
-The patent covers a **system architecture** comprising:
+✅ **System Architecture** – High-level design and component overview  
+✅ **Methodology** – Data integration, feature engineering, model selection  
+✅ **Evaluation** – Complete results, error analysis, failure modes  
+✅ **Visualizations** – Performance plots and reproducible generation scripts  
+✅ **Engineering Decisions** – Design rationale and tradeoff analysis  
 
-1. **Data Acquisition Module**
-   - Collects multi-source agricultural data:
-     - Satellite imagery (vegetation indices: NDVI, VCI)
-     - Climate parameters from meteorological APIs (NASA POWER)
-     - Historical crop yield records at district level (ICRISAT)
+### What's Protected
 
-2. **Data Preprocessing Pipeline**
-   - Harmonizes heterogeneous data sources through:
-     - Temporal alignment (daily → 16-day → annual)
-     - Spatial harmonization (grids → district boundaries)
-     - Feature scaling and normalization
-
-3. **Deep Fusion Neural Network Architecture**
-   - **Climate branch:** Processes meteorological and vegetation indices
-   - **Geospatial branch:** Processes geographical coordinates
-   - Separate processing branches for different data types
-   - Multi-head attention mechanism combines outputs
-   - Learns complex interactions between climate and location features
-
-4. **Prediction Engine**
-   - Generates district-level crop yield forecasts
-   - Based on combined outputs from fusion architecture
+🔒 **Full Implementation Code** – Dataset ETL, model training pipelines  
+🔒 **DeepFusionNN Architecture** – Layer-by-layer specifications (patent-protected)  
+🔒 **Proprietary Datasets** – ICRISAT requires institutional access agreement  
+🔒 **Production Infrastructure** – Deployment configurations and API keys  
 
 ---
 
-## What Is NOT Patented (Prior Art)
+## Why This Approach?
 
-To be clear about what the patent **does not claim**:
-
-### Standard Machine Learning Components (Prior Art)
-- ❌ **Multi-head attention mechanism** (Vaswani et al., 2017: "Attention Is All You Need")
-- ❌ **Convolutional neural networks** (LeCun et al., 1998)
-- ❌ **LSTM networks** (Hochreiter & Schmidhuber, 1997)
-- ❌ **Random Forest / XGBoost** (Breiman, 2001; Chen & Guestrin, 2016)
-- ❌ **Dropout, batch normalization** (Srivastava et al., 2014; Ioffe & Szegedy, 2015)
-
-### Standard Agricultural Data Processing (Prior Art)
-- ❌ **NDVI calculation** ((NIR - Red) / (NIR + Red)) — Rouse et al., 1974
-- ❌ **Growing Degree Days (GDD)** — McMaster & Wilhelm, 1997
-- ❌ **Zonal statistics** (raster → polygon aggregation) — GDAL standard operations
-
-### Generic System Design Patterns (Prior Art)
-- ❌ **Data preprocessing pipelines** (ETL patterns)
-- ❌ **Modular software architecture** (separation of concerns)
-- ❌ **API-based data acquisition** (REST API design)
+1. **Patent Compliance:** Application under examination – avoiding premature disclosure of protected claims
+2. **Dataset Licensing:** ICRISAT TCI database requires institutional agreements (not publicly redistributable)
+3. **Institutional Policy:** VIT technology transfer guidelines for student-led research
 
 ---
 
-## What Makes This Patent Novel?
+## What the Patent Covers
 
-### Novelty Claim 1: Multi-Source Integration at District Level
+### Novel System Components (Patent-Protected)
 
-**Prior Work:**
-- You et al. (2017): Satellite-only, county-level (US)
-- Patel et al. (2023): Climate + Satellite, state-level (India)
-- Jin et al. (2017): Multi-satellite fusion, county-level (US)
+- **Multi-source integration framework** for agricultural data harmonization
+- **Crop-specific temporal alignment** methodology (Kharif vs. Rabi windowing)
+- **Adaptive spatial aggregation** (500m satellite pixels → irregular district boundaries)
+- **DeepFusionNN architecture** with multi-head attention for climate-location interaction
 
-**Our Innovation:**
-- **First system** to integrate ICRISAT (district, annual) + NASA POWER (grid, daily) + ISRO VEDAS (500m, 16-day)
-- **District-level** resolution for India (administrative unit for policy)
-- **Automated harmonization** (not manual data alignment)
+### Standard Practice (Not Patent Claims)
 
-**Patent Claim:** The specific combination and harmonization methodology at this resolution.
+- Zonal statistics for spatial aggregation (GDAL standard)
+- Growing Degree Days (GDD) calculation (established agronomic method)
+- Maximum Value Composite (MVC) for cloud masking (common in remote sensing)
+- Random Forest and XGBoost algorithms (open-source implementations)
 
----
-
-### Novelty Claim 2: Crop-Specific Temporal Alignment
-
-**Standard Practice:** Use calendar year (Jan-Dec) for all crops
-
-**Our Innovation:**
-- **Kharif crops** (Rice, Maize): Align June Year_N to October Year_N
-- **Rabi crops** (Wheat): Align November Year_N to March Year_(N+1)
-- **Zaid crops** (Vegetables): Align March to June
-
-**Why This Matters:**
-- Wheat harvested in March 2016 is reported as "2015 yield" in ICRISAT
-- Must align climate data to **crop year**, not calendar year
-- System automates this alignment based on crop type
-
-**Patent Claim:** Automated crop-specific temporal windowing methodology.
+**Key Distinction:** Patent protects the **system integration and automation**, not individual ML techniques.
 
 ---
 
-### Novelty Claim 3: Multi-Branch Fusion for Agricultural Data
+## Collaboration & Access
 
-**Prior Work in Multi-Modal Fusion:**
-- Computer Vision: Image + Text fusion (CLIP, DALL-E) — OpenAI, 2021
-- Medical Imaging: CT + MRI fusion — Litjens et al., 2017
-- **But not applied to agricultural tabular + geospatial data**
+### For Recruiters
 
-**Our Innovation:**
-- Separate branches for climate (dense, 12 features) vs. geospatial (sparse, 2 features)
-- **Asymmetric branch sizes** (128 vs. 64) prevents feature imbalance
-- Attention fusion learns **location-specific climate sensitivities**
-  - Example: Coastal districts weight humidity higher than inland districts
+**Available:**
+- Private walkthrough of implementation (screen share or code review)
+- Detailed technical discussion of design decisions
+- Live demo of data pipeline and model evaluation
+- References from project supervisor (Dr. Jayakumar K)
 
-**Patent Claim:** The specific architecture design for agricultural multi-modal data (tabular + geospatial).
+**Contact:** saksham.bjj@gmail.com
 
----
+### For Academic Researchers
 
-### Novelty Claim 4: Scalable System Design for Nationwide Deployment
+**Available:**
+- Methodology documentation and best practices
+- Preprocessed sample datasets (100 districts, non-commercial use)
+- Collaboration on dataset expansion (5,000+ districts)
+- Joint research opportunities
 
-**Prior Work:**
-- Academic research systems: Single-region, manual processing
-- Commercial systems: Proprietary, not scalable
+**Contact:**  
+Academic inquiries – saksham.bjj@gmail.com  
+Institutional partnerships – patents@vit.ac.in
 
-**Our Innovation:**
-- **Modular architecture** (data acquisition, preprocessing, prediction are independent)
-- **Scalable to 5,000+ districts** (current: 300, but system generalizes)
-- **Automated data pipelines** (no manual intervention)
-- **Documented reproducibility** (others can deploy)
+### For Commercial Licensing
 
-**Patent Claim:** The system architecture as a whole, enabling operational deployment.
+**Available:**
+- Technology transfer agreements through VIT
+- Production deployment support
+- Custom model development for specific crops/regions
 
----
-
-## Patent vs. Implementation: Important Distinction
-
-### What the Patent Protects
-**The method and system design:**
-- How to integrate multi-source agricultural data at district level
-- How to harmonize temporal and spatial resolutions automatically
-- How to design a neural network for agricultural prediction
-- How to scale this to nationwide coverage
-
-### What the Patent Does NOT Protect
-**The specific implementation:**
-- Choice of Python vs. Java
-- Use of TensorFlow vs. PyTorch
-- Specific hyperparameters (learning rate, batch size)
-- Exact number of layers or neurons
-
-**Analogy:**
-- Patent: "A recipe for integrating agricultural data using neural networks"
-- Implementation: "A specific cake baked following that recipe"
-- **Others can bake their own cake (different code), but must follow the recipe (patented method)**
+**Contact:** patents@vit.ac.in
 
 ---
 
-## Why Code Is Not Publicly Released (Yet)
+## Post-Patent Grant Roadmap
 
-### Reason 1: Patent Examination in Progress
+**Upon patent grant (estimated 18-24 months):**
 
-**Status:** Application published (Dec 2025), but **not yet granted**
+1. **Reference Implementation** (Apache 2.0 + Patent Grant License)
+   - Open-source data integration pipeline
+   - Model training framework
+   - Evaluation toolkit
 
-**Timeline:**
-- Nov 2025: Patent filed
-- Dec 2025: Patent published (18-day early publication)
-- Jan 2026: Current status (examination ongoing)
-- Mid 2027 (estimated): Patent granted or rejected
+2. **Sample Datasets** (Research License)
+   - 100-district preprocessed subset
+   - Synthetic test data for validation
+   - Non-commercial use permitted
 
----
+3. **Trained Model Weights** (Research License)
+   - Random Forest ensemble (production-ready)
+   - DeepFusionNN checkpoints (experimental)
+   - Inference API examples
 
-**Risk if code released prematurely:**
-- Competitors could argue "publicly disclosed before grant → invalidates claims"
-- **Note:** This is a conservative interpretation. Many patents release code post-publication.
-- VIT legal counsel recommends waiting until **grant** (not just publication)
-
----
-
-### Reason 2: Dataset Licensing Restrictions
-
-**ICRISAT TCI Database License:**
-- **Available for:** Academic research, non-commercial use
-- **Requires:** Institutional agreement (VIT has this)
-- **Prohibits:** Redistribution without ICRISAT permission
-
-**Implication:**
-- We cannot release the **preprocessed dataset** publicly
-- Code without data is not reproducible
-- Must provide **data access protocol** for researchers
-
-**Solution in Progress:**
-- Negotiating with ICRISAT for data-sharing agreement
-- Alternative: Release code + sample data (100 districts, anonymized)
-
----
-
-### Reason 3: Institutional IP Policy Compliance
-
-**VIT Technology Transfer Office Policy:**
-- Faculty/student inventions during research = VIT owns IP
-- Code release requires **approval from IP committee**
-- Process: Submit request → Review (30 days) → Approval
-
-**Current Status:**
-- Patent filing approved (Nov 2025)
-- Code release request submitted (Dec 2025)
-- **Pending approval** (expected Jan 2026)
-
-**Why the delay?**
-- VIT exploring commercialization options (license to agritech startups)
-- If commercialized → code remains proprietary
-- If not → code will be open-sourced under Apache 2.0 license
-
----
-
-## Code Availability Roadmap
-
-### Phase 1: Verified Researchers (Current - Mid 2026)
-
-**Who qualifies:**
-- Academic researchers with institutional email
-- Government agricultural departments
-- Non-profit organizations
-
-**What's provided:**
-- Full source code (training + inference)
-- Preprocessed sample dataset (100 districts, 5 years)
-- Validation protocol (reproduce our RMSE results)
-- Documentation (setup, usage, API reference)
-
-**How to request:**
-- Email: saksham.bajaj2021@vitstudent.ac.in
-- Include: Affiliation, research purpose, expected publications
-- Response time: 7-14 days
-- Agreement: Non-disclosure, academic use only
-
----
-
-### Phase 2: Open-Source Release (Post Patent Grant, ~Mid 2027)
-
-**License:** Apache 2.0 + Patent Grant
-
-**What this means:**
-- ✅ Anyone can use the code for **any purpose** (commercial or non-commercial)
-- ✅ No royalty fees
-- ✅ Can modify and redistribute
-- ⚠️ **With patent grant:** VIT grants you license to use the patented method
-  - You won't get sued for patent infringement if you use this code
-  - But: If you implement the method **independently** (without this code), you might need a license
-
-**Example (similar to TensorFlow):**
-- TensorFlow is Apache 2.0 licensed (open-source)
-- But Google holds patents on some TensorFlow methods
-- **Patent grant** in TensorFlow license means: "Use our code = patent license included"
-
-**Release package:**
-```
-climate-smart-crop-yield/
-├── src/                        # Full source code
-├── data/                       # Sample datasets
-│   ├── sample_300_districts.csv
-│   └── data_access_guide.md    # How to get full ICRISAT data
-├── models/                     # Pre-trained weights
-│   ├── random_forest.pkl
-│   ├── xgboost.pkl
-│   └── deep_fusion.pth
-├── notebooks/                  # Jupyter tutorials
-│   ├── 01_data_loading.ipynb
-│   ├── 02_training.ipynb
-│   └── 03_evaluation.ipynb
-├── docs/                       # API documentation
-├── tests/                      # Unit tests
-├── requirements.txt
-├── setup.py
-├── LICENSE                     # Apache 2.0 + Patent Grant
-└── README.md
-```
-
----
-
-### Phase 3: Commercial Licensing (Parallel Track)
-
-**For companies wanting commercial deployment:**
-
-**What's offered:**
-- Exclusive license for specific regions (e.g., Maharashtra state)
-- Customization support (adapt to company's data sources)
-- Service-level agreements (SLA for model updates)
-- Liability coverage (if model fails, VIT provides compensation)
-
-**Pricing model (estimated):**
-- One-time license fee: ₹10-50 lakhs (depends on region size)
-- Annual maintenance: 10% of license fee
-- Revenue sharing: 2-5% of product revenue (if applicable)
-
-**Target customers:**
-- Agritech startups (CropIn, Fasal, Ninjacart)
-- Insurance companies (crop insurance products)
-- Government agencies (state agricultural departments)
-- International NGOs (FAO, CGIAR)
-
-**Contact:** VIT Technology Transfer Office (patents@vit.ac.in)
+**Target Release:** Q3 2026 (subject to patent office timeline)
 
 ---
 
 ## Frequently Asked Questions
 
-### Q1: "I want to reproduce your results for my research. Can I get the code?"
+### Q: Can I reproduce your results?
 
-**A:** Yes, if you're an academic researcher.
+**A:** Methodology is fully documented. Researchers can:
+- Access ICRISAT database via institutional agreement
+- Use NASA POWER API (publicly available)
+- Download ISRO VEDAS data (registration required)
+- Follow preprocessing steps in PIPELINE_OVERVIEW.md
 
-**Process:**
-1. Email saksham.bajaj2021@vitstudent.ac.in with:
-   - Your institutional affiliation
-   - Research purpose (thesis, paper, project)
-   - Expected publication venue
-2. Sign academic use agreement (non-disclosure, cite our work)
-3. Receive code + sample data within 14 days
+Full reproduction requires institutional ICRISAT access. Partial validation possible with public datasets.
 
-**Alternative (no agreement needed):**
-- Full methodology is documented in this repository
-- You can **reimplement from scratch** using our specifications
-- This is **not patent infringement** (you're not using our code, just the idea)
-- **But:** If you publish, please cite our work
+### Q: Why not use a permissive open-source license?
 
----
+**A:** Three constraints:
+1. **Patent under examination** – premature code release could jeopardize claims
+2. **Dataset licensing** – ICRISAT data not redistributable without agreement
+3. **Institutional policy** – VIT requires controlled disclosure for student research with patent potential
 
-### Q2: "Can I use this for my startup/company?"
+This is standard practice for academic research with commercial potential.
 
-**A:** After open-source release (mid 2027), yes (under Apache 2.0 + Patent Grant).
+### Q: Is the patent defensive or commercial?
 
-**Before release:**
-- Contact VIT Technology Transfer Office for commercial license
-- Licensing process: 2-3 months
-- Costs: Negotiable (depends on company size, region)
+**A:** **Primarily defensive.** Protects the system design for:
+- Academic publication without fear of patent trolls
+- Future open-source release with clear IP ownership
+- Potential commercial partnerships (agricultural tech companies, government agencies)
 
-**Special case: Funded research projects**
-- If your company has a research grant (ICAR, DBT, DST), we can collaborate
-- Joint research agreements available
-- Contact: Dr. Jayakumar K (jayakumar.k@vit.ac.in)
+VIT's policy supports eventual open-sourcing post-grant.
 
----
+### Q: Can I use your methodology in my own project?
 
-### Q3: "If I build my own crop yield model using similar data sources, will I infringe your patent?"
+**A:** Yes, **methodology is not patented**. You can:
+- ✅ Use the documented approach for your own agricultural ML projects
+- ✅ Implement similar data integration pipelines
+- ✅ Apply feature engineering techniques (GDD, NDVI aggregation, etc.)
+- ✅ Cite this work in academic publications
 
-**A:** Depends on how similar your **system design** is.
+Patent covers the **specific automated system**, not general ML techniques.
 
-**Probably NOT infringement:**
-- Using ICRISAT + NASA data (publicly available)
-- Using Random Forest or XGBoost (prior art)
-- Using NDVI or GDD (standard agricultural metrics)
+### Q: How do I cite this work?
 
-**Probably IS infringement:**
-- Building a system with the **same architecture** (multi-branch fusion with climate + geo branches)
-- Using the **same temporal alignment method** (crop-specific windowing)
-- Replicating our **automated data harmonization pipeline** exactly
-
-**Safe approach:**
-- Design your own architecture (e.g., single-branch MLP, or ensemble of separate models)
-- If unsure, consult a patent attorney
-
-**Our stance:**
-- We encourage research and innovation
-- Patent is to protect VIT's IP, not to block academic research
-- If you're a researcher, just cite our work — we won't sue
-
----
-
-### Q4: "Why did you patent this if you believe in open science?"
-
-**A:** Valid question. Here's our reasoning:
-
-**Why we filed the patent:**
-1. **VIT institutional requirement:** Faculty/student research outcomes must be reviewed for IP
-2. **Protect against commercialization without attribution:** Without a patent, a company could take our work, commercialize it, and never cite us
-3. **Enable open licensing:** Apache 2.0 + Patent Grant **requires a patent to exist first**
-   - Without patent: We can open-source code, but can't prevent patent trolls from patenting our method
-   - With patent: We hold the patent, grant it freely with open-source license
-
-**Our commitment:**
-- **No intent to sue academic researchers** (cite our work, you're fine)
-- **No intent to charge unreasonable licensing fees** (commercial licenses will be affordable for startups)
-- **Will open-source post-grant** (target: mid 2027)
-
-**Inspiration:**
-- Tesla open-sourced their patents (2014) to accelerate EV adoption
-- Google open-sources TensorFlow (Apache 2.0 + Patent Grant)
-- We're following the same model: **Patent to protect, then open-source to enable**
-
----
-
-### Q5: "What if I implemented this before your patent was filed (Nov 2025)?"
-
-**A:** You have **prior use rights** (in patent law).
-
-**If you can prove:**
-- You implemented a similar system before Nov 24, 2025
-- You did so independently (not by copying our work)
-- You have documentation (code commits, research notes)
-
-**Then:**
-- You can **continue using your implementation** (even if our patent is granted)
-- **But:** You cannot expand it commercially without a license
-
-**Example:**
-- You built a district-level yield model in 2024 → You're safe
-- You want to scale it to 5,000 districts in 2026 → Might need a license (depends on similarity)
-
-**Advice:** Consult a patent attorney if you're in this situation.
-
----
-
-## Summary: Who Can Use This Work?
-
-| User Type | Current (Pre-Grant) | Post-Grant (Mid 2027+) |
-|-----------|---------------------|------------------------|
-| **Academic Researchers** | ✅ Request code via email | ✅ Open-source (Apache 2.0) |
-| **Students (thesis/projects)** | ✅ Request code via email | ✅ Open-source (Apache 2.0) |
-| **Government Agencies** | ✅ Contact VIT for collaboration | ✅ Open-source (Apache 2.0) |
-| **Startups (non-commercial)** | ⚠️ Request code (case-by-case) | ✅ Open-source (Apache 2.0) |
-| **Companies (commercial)** | ❌ License required | ✅ Open-source (Apache 2.0 + Patent Grant) |
-| **NGOs** | ✅ Contact VIT for partnership | ✅ Open-source (Apache 2.0) |
-
-**Key Takeaway:**
-- **Research use:** Always allowed (just cite our work)
-- **Commercial use:** Will be freely allowed post-grant (Apache 2.0)
-- **Before grant:** Contact us for code access
-
----
-
-## Citation
-
-If you use this work (data, methodology, or code), please cite:
-
-**Conference Paper (Recommended):**
-```
-@inproceedings{bajaj2025crop,
+```bibtex
+@mastersthesis{bajaj2025crop,
   title={Deep Learning Approach for Crop Yield Prediction using Intelligent Climate Change Prediction},
-  author={Bajaj, Saksham and Srivastava, Rishabhraj and Kumar, Harshit Vijay and Jayakumar, K},
-  booktitle={Capstone Project, VIT Vellore},
+  author={Bajaj, Saksham and Srivastava, Rishabhraj and Kumar, Harshit Vijay},
   year={2025},
+  school={Vellore Institute of Technology},
   note={Patent Application No. 202541116475 A}
 }
 ```
 
-**Patent Reference:**
-```
-@misc{bajaj2025patent,
-  title={Deep Fusion Neural Network System for Crop Yield Prediction},
-  author={Jayakumar, K and Bajaj, Saksham and Srivastava, Rishabhraj and Kumar, Harshit Vijay},
-  year={2025},
-  note={Indian Patent Application No. 202541116475 A, Published Dec 12, 2025},
-  applicant={Vellore Institute of Technology}
-}
-```
+---
+
+## Compliance Statement
+
+This repository complies with:
+- **VIT IP Policy** (Section 4.2: Student Research Disclosure)
+- **India Patent Act 1970** (Section 10: Provisional vs. Complete Specification)
+- **ICRISAT Data Usage Agreement** (No redistribution of raw TCI database)
+- **GitHub Terms of Service** (Public repository with protected IP notice)
+
+All public materials have been reviewed by VIT Technology Transfer Office.
 
 ---
 
-## Contact Information
+## Updates & Timeline
 
-**For Research Collaboration:**
-📧 saksham.bajaj2021@vitstudent.ac.in  
-📧 jayakumar.k@vit.ac.in (Faculty Supervisor)
+| Date | Event | Status |
+|------|-------|--------|
+| Nov 24, 2025 | Patent application filed | ✅ Complete |
+| Dec 12, 2025 | Patent published | ✅ Complete |
+| Jan 2026 | GitHub repository public | ✅ Current |
+| Q2 2026 | First examination report | ⏳ Pending |
+| Q3 2026 | Patent grant (estimated) | ⏳ Pending |
+| Q4 2026 | Open-source release (target) | ⏳ Pending |
 
-**For Commercial Licensing:**
-🏛️ VIT Technology Transfer Office  
-📧 patents@vit.ac.in  
-📞 +91-416-220-2108
-
-**For Patent Inquiries:**
-🔗 Indian Patent Office: https://ipindiaonline.gov.in/patentsearch/  
-🔍 Search Application No.: 202541116475 A
+**Stay updated:** Follow this repository for announcements on code release timeline.
 
 ---
 
-**Last Updated:** January 2026  
-**Next Update:** Post patent examination (estimated mid 2027)
-
----
+**Last Updated:** January 2026
