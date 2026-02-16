@@ -176,5 +176,5 @@ On grant, planned release: data pipeline, model framework, evaluation toolkit, 1
 
 ---
 
-**Author:** Saksham Bajaj · [LinkedIn](https://www.linkedin.com/in/saksham-bjj/) · [GitHub](https://github.com/SakshamBjj)
+**Author:** Saksham Bajaj · [LinkedIn](https://www.linkedin.com/in/saksham-bjj/) · [GitHub](https://github.com/SakshamBjj)    
 **Last Updated:** February 2026
