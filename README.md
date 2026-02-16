@@ -169,13 +169,12 @@ On grant, planned release: data pipeline, model framework, evaluation toolkit, 1
   title={Deep Learning Approach for Crop Yield Prediction using Intelligent Climate Change Prediction},
   author={Bajaj, Saksham and Srivastava, Rishabhraj and Kumar, Harshit Vijay},
   year={2025},
-  note={B.Tech Capstone Project (BCSE498J), Vellore Institute of Technology.
-        Supervised by Dr. Jayakumar K.
+  note={Vellore Institute of Technology.
         Patent Application No. 202541116475 A (published 12/12/2025)}
 }
 ```
 
 ---
 
-**Author:** Saksham Bajaj · [LinkedIn](https://www.linkedin.com/in/saksham-bjj/) · [GitHub](https://github.com/SakshamBjj) · sakshambajaj@email.com  
+**Author:** Saksham Bajaj · [LinkedIn](https://www.linkedin.com/in/saksham-bjj/) · [GitHub](https://github.com/SakshamBjj)
 **Last Updated:** February 2026
