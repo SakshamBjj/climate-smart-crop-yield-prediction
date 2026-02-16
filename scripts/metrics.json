@@ -1,134 +1,50 @@
 {
+  "_metadata": {
+    "temporal_evaluation_note": "Per-year RMSE values in temporal_data are from out-of-bag (OOB) evaluation across all 10 years. Headline RF RMSE (578.84) is from strict temporal holdout: trained on 2008-2015 only, evaluated on pooled 2016-2017 predictions. These are different methodologies.",
+    "inference_cost_unit": "USD per 1,000 predictions"
+  },
   "model_metrics": [
-    {
-      "Model": "Random Forest",
-      "RMSE": 578.84,
-      "R2": 0.7796,
-      "MAE": 489.5,
-      "Training_Time_Minutes": 12,
-      "Inference_Cost": 0.15
-    },
-    {
-      "Model": "XGBoost",
-      "RMSE": 572.07,
-      "R2": 0.7784,
-      "MAE": 503.5,
-      "Training_Time_Minutes": 18,
-      "Inference_Cost": 0.12
-    },
-    {
-      "Model": "DeepFusionNN",
-      "RMSE": 690.20,
-      "R2": 0.6550,
-      "MAE": 366.7,
-      "Training_Time_Minutes": 165,
-      "Inference_Cost": 0.42
-    },
-    {
-      "Model": "CNN-LSTM",
-      "RMSE": 749.77,
-      "R2": 0.5907,
-      "MAE": 338.6,
-      "Training_Time_Minutes": 75,
-      "Inference_Cost": 0.38
-    }
+    {"Model": "Random Forest", "RMSE": 578.84, "R2": 0.7796, "MAE": 489.5, "Training_Time_Minutes": 12, "Inference_Cost_USD_per_1k": 0.15},
+    {"Model": "XGBoost", "RMSE": 572.07, "R2": 0.7784, "MAE": 503.5, "Training_Time_Minutes": 18, "Inference_Cost_USD_per_1k": 0.12},
+    {"Model": "DeepFusionNN", "RMSE": 690.20, "R2": 0.6550, "MAE": 366.7, "Training_Time_Minutes": 165, "Inference_Cost_USD_per_1k": 0.42},
+    {"Model": "CNN-LSTM", "RMSE": 749.77, "R2": 0.5907, "MAE": 338.6, "Training_Time_Minutes": 75, "Inference_Cost_USD_per_1k": 0.38}
   ],
-  
   "learning_curves": {
     "training_samples": [500, 1000, 2000, 3000, 5760],
     "deepfusion_val_rmse": [1245, 982, 798, 712, 690],
     "deepfusion_val_r2": [0.38, 0.52, 0.61, 0.64, 0.65],
     "rf_baseline_rmse": 578.84,
-    "rf_baseline_r2": 0.78
+    "rf_baseline_r2": 0.78,
+    "headline_held_out_rmse": 578.84,
+    "headline_eval_note": "RF baseline is from temporal holdout (2008-2015 train, 2016-2017 test)"
   },
-  
   "feature_importance": [
-    {
-      "Feature": "GDD",
-      "Importance": 32,
-      "Interpretation": "Heat accumulation drives crop development"
-    },
-    {
-      "Feature": "NDVI",
-      "Importance": 18,
-      "Interpretation": "Direct measure of vegetation health"
-    },
-    {
-      "Feature": "PRECTOT",
-      "Importance": 14,
-      "Interpretation": "Water availability (rainfed crops)"
-    },
-    {
-      "Feature": "T2M_MAX",
-      "Importance": 9,
-      "Interpretation": "High temps during flowering reduce yield"
-    },
-    {
-      "Feature": "VCI (%)",
-      "Importance": 7,
-      "Interpretation": "Relative vegetation health vs. historical"
-    },
-    {
-      "Feature": "Latitude",
-      "Importance": 6,
-      "Interpretation": "Proxy for agro-climatic zone"
-    },
-    {
-      "Feature": "RH2M",
-      "Importance": 5,
-      "Interpretation": "Humidity affects disease pressure"
-    },
-    {
-      "Feature": "Temp_Range",
-      "Importance": 4,
-      "Interpretation": "Diurnal variation indicates water stress"
-    },
-    {
-      "Feature": "Longitude",
-      "Importance": 3,
-      "Interpretation": "East-west monsoon gradient"
-    },
-    {
-      "Feature": "QV2M",
-      "Importance": 2,
-      "Interpretation": "Specific humidity (redundant with RH2M)"
-    }
+    {"Feature": "GDD", "Importance": 32, "Interpretation": "Heat accumulation drives crop development"},
+    {"Feature": "NDVI", "Importance": 18, "Interpretation": "Direct measure of vegetation health"},
+    {"Feature": "PRECTOT", "Importance": 14, "Interpretation": "Water availability (rainfed crops)"},
+    {"Feature": "T2M_MAX", "Importance": 9, "Interpretation": "High temps during flowering reduce yield"},
+    {"Feature": "VCI (%)", "Importance": 7, "Interpretation": "Relative vegetation health vs. historical"},
+    {"Feature": "Latitude", "Importance": 6, "Interpretation": "Proxy for agro-climatic zone"},
+    {"Feature": "RH2M", "Importance": 5, "Interpretation": "Humidity affects disease pressure"},
+    {"Feature": "Temp_Range", "Importance": 4, "Interpretation": "Diurnal variation indicates water stress"},
+    {"Feature": "Longitude", "Importance": 3, "Interpretation": "East-west monsoon gradient"},
+    {"Feature": "QV2M", "Importance": 2, "Interpretation": "Specific humidity (redundant with RH2M)"}
   ],
-  
   "temporal_data": [
-    {"Year": 2008, "RMSE": 623, "R2": 0.76, "Climate": "Normal"},
-    {"Year": 2009, "RMSE": 742, "R2": 0.69, "Climate": "Drought*"},
-    {"Year": 2010, "RMSE": 588, "R2": 0.79, "Climate": "Good"},
-    {"Year": 2011, "RMSE": 610, "R2": 0.77, "Climate": "Normal"},
-    {"Year": 2012, "RMSE": 655, "R2": 0.74, "Climate": "Delayed"},
-    {"Year": 2013, "RMSE": 592, "R2": 0.78, "Climate": "Normal"},
-    {"Year": 2014, "RMSE": 601, "R2": 0.77, "Climate": "Normal"},
-    {"Year": 2015, "RMSE": 798, "R2": 0.64, "Climate": "Severe Drought*"},
-    {"Year": 2016, "RMSE": 812, "R2": 0.61, "Climate": "Drought*"},
-    {"Year": 2017, "RMSE": 623, "R2": 0.73, "Climate": "Normal"}
+    {"Year": 2008, "RMSE": 623, "R2": 0.76, "Climate": "Normal",         "is_drought": false, "eval_type": "oob_training"},
+    {"Year": 2009, "RMSE": 742, "R2": 0.69, "Climate": "Drought",        "is_drought": true,  "eval_type": "oob_training"},
+    {"Year": 2010, "RMSE": 588, "R2": 0.79, "Climate": "Good",           "is_drought": false, "eval_type": "oob_training"},
+    {"Year": 2011, "RMSE": 610, "R2": 0.77, "Climate": "Normal",         "is_drought": false, "eval_type": "oob_training"},
+    {"Year": 2012, "RMSE": 655, "R2": 0.74, "Climate": "Delayed",        "is_drought": false, "eval_type": "oob_training"},
+    {"Year": 2013, "RMSE": 592, "R2": 0.78, "Climate": "Normal",         "is_drought": false, "eval_type": "oob_training"},
+    {"Year": 2014, "RMSE": 601, "R2": 0.77, "Climate": "Normal",         "is_drought": false, "eval_type": "oob_training"},
+    {"Year": 2015, "RMSE": 798, "R2": 0.64, "Climate": "Severe Drought", "is_drought": true,  "eval_type": "oob_training"},
+    {"Year": 2016, "RMSE": 812, "R2": 0.61, "Climate": "Drought",        "is_drought": true,  "eval_type": "oob_test_context"},
+    {"Year": 2017, "RMSE": 623, "R2": 0.73, "Climate": "Normal",         "is_drought": false, "eval_type": "oob_test_context"}
   ],
-  
   "crop_performance": [
-    {
-      "Crop": "Wheat",
-      "RMSE": 485,
-      "R2": 0.82,
-      "Mean_Yield": 3200,
-      "Relative_Error": 15
-    },
-    {
-      "Crop": "Rice",
-      "RMSE": 623,
-      "R2": 0.76,
-      "Mean_Yield": 2800,
-      "Relative_Error": 22
-    },
-    {
-      "Crop": "Maize",
-      "RMSE": 754,
-      "R2": 0.71,
-      "Mean_Yield": 2400,
-      "Relative_Error": 31
-    }
+    {"Crop": "Wheat", "RMSE": 485, "R2": 0.82, "Mean_Yield": 3200, "Relative_Error": 15},
+    {"Crop": "Rice",  "RMSE": 623, "R2": 0.76, "Mean_Yield": 2800, "Relative_Error": 22},
+    {"Crop": "Maize", "RMSE": 754, "R2": 0.71, "Mean_Yield": 2400, "Relative_Error": 31}
   ]
 }
