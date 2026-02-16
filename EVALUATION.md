@@ -1,25 +1,31 @@
 # Evaluation & Error Analysis
 
-## Performance Metrics
-
-### Overall Results (Test Set: 2016-2017)
-
-| Model | RMSE (kg/ha) | R² | MAE (kg/ha) | Training Time | Inference Cost |
-|-------|--------------|-----|-------------|---------------|----------------|
-| Random Forest | 578.84 | 0.7796 | 489.5 | 12 min | $0.15/1k |
-| XGBoost | 572.07 | 0.7784 | 503.5 | 18 min | $0.12/1k |
-| DeepFusionNN | 690.20 | 0.6550 | 366.7 | 2h 45m | $0.42/1k |
-| CNN-LSTM | 749.77 | 0.5907 | 338.6 | 1h 15m | $0.38/1k |
-
-**Key Finding:** Tree-based models (RF, XGBoost) achieved 78% explained variance, outperforming deep learning by 22% on RMSE while being 10× faster to train and 3× cheaper for inference.
+*Deep-dive companion to [README.md](../README.md). Covers model comparison, failure modes, case studies, and proposed improvements.*
 
 ---
 
-## Why Deep Learning Underperformed
+## Results (Test Set: 2016–2017)
+
+| Model | RMSE (kg/ha) | R² | MAE (kg/ha) | Training Time | Inference Cost |
+|-------|--------------|-----|-------------|---------------|----------------|
+| **Random Forest** | **578** | **0.78** | 489 | 12 min | $0.15/1k |
+| **XGBoost** | **572** | **0.78** | 503 | 18 min | $0.12/1k |
+| DeepFusionNN | 690 | 0.66 | 367 | 2h 45m | $0.42/1k |
+| CNN-LSTM | 750 | 0.59 | 339 | 1h 15m | $0.38/1k |
+
+Tree ensembles: 22% lower RMSE, 10× faster training, 3× lower inference cost.
+
+![Model Comparison RMSE](assets/model_comparison_rmse.png)
+
+![Model Comparison R²](assets/model_comparison_r2.png)
+
+---
+
+## Model Selection Rationale
+
+DeepFusionNN is the interaction modeling layer of the framework, designed for national-scale deployment. Learning curve analysis explains why tree ensembles are the correct choice at 7,200 samples.
 
 ### Learning Curve Analysis
-
-**Experiment:** Trained DeepFusionNN on increasing dataset sizes
 
 | Training Samples | Validation RMSE | Validation R² |
 |------------------|-----------------|---------------|
@@ -27,23 +33,20 @@
 | 1,000 | 982 kg/ha | 0.52 |
 | 2,000 | 798 kg/ha | 0.61 |
 | 3,000 | 712 kg/ha | 0.64 |
-| **5,760 (full)** | **690 kg/ha** | **0.65** |
+| 5,760 (full) | 690 kg/ha | 0.65 |
 
 ![Learning Curves](assets/learning_curves_deepfusion.png)
 
-**Conclusion:**
-- Validation loss plateaus at ~3,000 samples
-- Power-law extrapolation suggests **5,000+ districts** (50K samples) needed for DL to match RF performance
-- **Root cause:** Data size, not architecture quality
+Validation loss plateaus at ~3,000 samples. Power-law extrapolation estimates DL crossover at **5,000+ districts (~50K samples)**.
 
 ### Parameter Efficiency
 
-| Model | Parameters | Samples/Parameter | Performance |
-|-------|------------|-------------------|-------------|
-| DeepFusionNN | 170,000 | 0.034 | R² = 0.65 |
-| Random Forest | ~10 million | 0.0006 | R² = 0.78 |
+| Model | Parameters | Samples/Parameter | R² |
+|-------|------------|-------------------|----|
+| DeepFusionNN | 170,000 | 0.034 | 0.65 |
+| Random Forest | ~10M tree nodes | 0.0006 | 0.78 |
 
-**Insight:** DeepFusionNN has 6× more samples per parameter than RF, yet RF performs better → **tree-based methods are more sample-efficient for tabular data** (established in ML literature: Chen & Guestrin, 2016)
+RF demonstrates higher sample efficiency for tabular data — consistent with Chen & Guestrin (XGBoost, 2016).
 
 ---
 
@@ -51,16 +54,16 @@
 
 ![Feature Importance](assets/feature_importance_rf.png)
 
-| Feature | Importance (%) | Interpretation |
-|---------|----------------|----------------|
+| Feature | Importance | Interpretation |
+|---------|-----------|----------------|
 | GDD | 32% | Heat accumulation drives crop development |
 | NDVI | 18% | Direct measure of vegetation health |
-| PRECTOT | 14% | Water availability (critical for rainfed crops) |
+| PRECTOT | 14% | Water availability (rainfed crops) |
 | T2M_MAX | 9% | High temps during flowering reduce yield |
-| VCI (%) | 7% | Relative vegetation health vs. historical norm |
-| Latitude | 6% | Proxy for agro-climatic zone |
+| VCI (%) | 7% | Vegetation health relative to historical norm |
+| Latitude | 6% | Agro-climatic zone proxy |
 
-**Key Insight:** Top 3 features (GDD, NDVI, PRECTOT) account for **64% of predictive power**. Model is **biologically interpretable** – these are established agronomic indicators.
+Top 3 features account for 64% of predictive power. All correspond to established agronomic indicators.
 
 ---
 
@@ -68,124 +71,94 @@
 
 ### High-Error Districts (RMSE > 700 kg/ha)
 
-**Regions:** Semi-arid zones (Rajasthan, Maharashtra Vidarbha, Northern Karnataka)
+**Regions:** Semi-arid zones — Rajasthan, Maharashtra Vidarbha, Northern Karnataka  
+**Scale:** 36 of 300 districts (~12%), ~8% of national production
 
-**Root Causes:**
-1. **Higher climate variability** – Coefficient of variation in precipitation > 40%
-2. **Data quality issues** – NDVI cloud contamination > 50% during monsoon
-3. **Agricultural heterogeneity** – Mixed cropping (intercropping confuses NDVI signal)
+**Root causes:**
+- Precipitation coefficient of variation > 40%
+- NDVI cloud contamination > 50% during monsoon
+- Intercropping confuses NDVI signal
 
-**Impact:** 12% of districts (36 out of 300), representing ~8% of national production
-
-**Example Failure: Beed District, Maharashtra (2015)**
-- Predicted: 1,890 kg/ha (maize)
-- Actual: 980 kg/ha
-- Error: -910 kg/ha (48% underestimate)
-- **Why:** Late monsoon onset (July instead of June) not captured in annual GDD aggregates
-
-**Remediation:**
-- Use **monthly GDD sequences** instead of annual sum (captures timing)
-- Add **climate anomaly features** (deviation from 10-year mean)
+**Case study — Beed District, Maharashtra (2015):**
+- Predicted: 1,890 kg/ha · Actual: 980 kg/ha · Error: −910 kg/ha (48%)
+- Cause: Late monsoon onset (July vs June) — annual GDD aggregate loses timing signal
+- Proposed fix: Monthly GDD sequences
 
 ---
 
 ### Low-Error Districts (RMSE < 450 kg/ha)
 
-**Regions:** Indo-Gangetic Plain (Punjab, Haryana), Coastal deltas (Krishna-Godavari)
+**Regions:** Indo-Gangetic Plain (Punjab, Haryana), Krishna-Godavari delta  
+**Scale:** 69 of 300 districts (~23%), ~35% of national production
 
-**Root Causes:**
-1. **Climate stability** – Reliable irrigation (80%+ cropped area), low precipitation variability (CV < 20%)
-2. **Data quality** – Clear skies during Rabi season (Nov-Mar) → clean NDVI
-3. **Homogeneous farming** – Monoculture wheat/rice, uniform practices
-
-**Impact:** 23% of districts (69 out of 300), representing ~35% of national production
+**Contributing factors:**
+- 80%+ irrigated area → low precipitation dependence
+- Clear skies during Rabi season (Nov–Mar) → clean NDVI data
+- Monoculture wheat/rice → uniform NDVI signal
 
 ---
 
 ## Temporal Error Analysis
 
-### Performance by Year
-
-| Year | RMSE (kg/ha) | R² | Climate Notes |
-|------|--------------|-----|---------------|
+| Year | RMSE (kg/ha) | R² | Notes |
+|------|--------------|-----|-------|
 | 2008 | 623 | 0.76 | Normal monsoon |
-| 2009 | 742 | 0.69 | **Drought (Maharashtra, Karnataka)** |
-| 2010-2014 | 588-655 | 0.74-0.79 | Normal years |
-| 2015 | 798 | 0.64 | **Severe drought (El Niño)** |
-| **2016** | **812** | **0.61** | **Drought continuation (South India)** |
+| 2009 | 742 | 0.69 | Drought — Maharashtra, Karnataka |
+| 2010–2014 | 588–655 | 0.74–0.79 | Normal years |
+| 2015 | 798 | 0.64 | Severe drought (El Niño) |
+| **2016** | **812** | **0.61** | Drought continuation |
 | 2017 | 623 | 0.73 | Normal monsoon returns |
 
 ![Temporal Performance](assets/temporal_performance.png)
 
-**Key Findings:**
-1. **Drought years (2009, 2015, 2016) have 25-30% higher RMSE**
-2. Model trained on 8 years (2008-2015) → only 2 drought years → insufficient examples to learn drought response
-3. **Model underestimates drought impact:** Reality = 40-60% yield reduction, Model predicts only 15-25% reduction
+Drought years (2009, 2015, 2016) show 25–30% higher RMSE. With 2 drought years in 8 training years, model systematically underestimates drought impact.
 
-**Remediation:**
-- **Oversample drought years** in training (SMOTE for regression)
-- Add **climate anomaly flags** (is this year extreme vs. 10-year average?)
-- Estimated improvement: -15% RMSE in drought years
+**Observed vs predicted drought impact:**  
+Actual yield reduction: 40–60%  
+Model prediction: 15–25%
+
+**Proposed fix:** Oversample drought years (SMOTE for regression) + climate anomaly features. Estimated improvement: −15% RMSE on drought years.
 
 ---
 
 ## Crop-Specific Performance
 
-![Crop-Specific Performance](assets/crop_specific_performance.png)
+![Crop Performance](assets/crop_specific_performance.png)
 
 | Crop | RMSE (kg/ha) | R² | Mean Yield | Relative Error |
 |------|--------------|-----|------------|----------------|
-| Wheat | 485 | **0.82** | 3,200 | 15% |
+| Wheat | 485 | 0.82 | 3,200 | 15% |
 | Rice | 623 | 0.76 | 2,800 | 22% |
 | Maize | 754 | 0.71 | 2,400 | 31% |
 
-### Why Wheat Performs Best
-- **Rabi crop (Nov-Mar)** → predictable winter climate
-- **80%+ irrigated** → less dependent on erratic rainfall
-- **Concentrated in Punjab/Haryana** → high data quality regions
-- **Uniform practices** → mechanized farming, consistent fertilizer use
+**Wheat (best):** Rabi season (Nov–Mar) = predictable winter climate; 80%+ irrigated; concentrated in high-quality data regions.
 
-### Why Rice is Medium
-- **Kharif crop (Jun-Oct)** → monsoon-dependent (high variability)
-- **Mixed systems** → rainfed (eastern India) + irrigated (Punjab)
-- **Longer growing season** → more opportunities for weather shocks
-- **NDVI cloud contamination** during monsoon
+**Rice (middle):** Kharif season (Jun–Oct) = monsoon-dependent; mixed rainfed/irrigated; NDVI cloud contamination during growing season.
 
-### Why Maize is Worst
-- **Highly heterogeneous** – Grown in both Kharif AND Rabi seasons
-- **Regional diversity** – Karnataka (rain-dependent), Bihar (flood-prone), Rajasthan (drought-prone)
-- **Data scarcity** – Maize is only ~15% of dataset (rice/wheat dominate)
+**Maize (worst):** Kharif and Rabi seasons — heterogeneous growing conditions; 15% of training samples; high regional diversity.
 
-**Remediation:** Train **separate crop-specific models** (estimated improvement: Maize R² from 0.71 → 0.76)
+**Proposed fix:** Crop-specific models — estimated R² improvement for maize: 0.71 → 0.76.
 
 ---
 
-## Failure Mode Analysis
+## Catastrophic Failures (Error > 1,000 kg/ha)
 
-### Catastrophic Failures (Error > 1,000 kg/ha)
+**Count:** 47 of 1,440 test predictions (3.3%)
 
-**Count:** 47 predictions out of 1,440 test samples (3.3%)
+**Case 1 — Maharashtra 2016 (drought + late monsoon):**
+- Predicted: 2,340 · Actual: 1,180 · Error: −1,160 kg/ha (49%)
+- Cause: Late monsoon onset (mid-July vs June) — annual GDD misses timing signal
+- Proposed fix: Monthly GDD sequences
 
-#### Case Study 1: Maharashtra 2016 (Drought + Late Monsoon)
-- Predicted: 2,340 kg/ha
-- Actual: 1,180 kg/ha
-- Error: -1,160 kg/ha (49% underestimate)
-- **Root cause:** Late monsoon onset (mid-July vs June) → model uses annual GDD, misses critical timing
-- **Solution:** Use monthly GDD sequences
+**Case 2 — Rajasthan 2015 (drought + locust):**
+- Predicted: 1,450 · Actual: 520 · Error: −930 kg/ha (64%)
+- Cause: Locust infestation — NDVI drop interpreted as drought; actual cause is biotic stress
+- Proposed fix: Pest/disease alert features
 
-#### Case Study 2: Rajasthan 2015 (Drought + Locust Attack)
-- Predicted: 1,450 kg/ha (bajra/pearl millet)
-- Actual: 520 kg/ha
-- Error: -930 kg/ha (64% underestimate)
-- **Root cause:** Locust infestation (biotic stress) not in model features → NDVI drops, but model interprets as drought
-- **Solution:** Add pest/disease alerts as external feature
-
-#### Case Study 3: Andhra Pradesh 2017 (Cyclone Damage)
-- Predicted: 3,100 kg/ha (rice)
-- Actual: 4,200 kg/ha
-- Error: +1,100 kg/ha (26% overestimate)
-- **Root cause:** Cyclone in October (pre-harvest) → damaged crop replanted → delayed harvest with higher yield
-- **Solution:** Incorporate disaster event database
+**Case 3 — Andhra Pradesh 2017 (cyclone damage):**
+- Predicted: 3,100 · Actual: 4,200 · Error: +1,100 kg/ha (26%)
+- Cause: Cyclone damaged pre-harvest crop → replanted → delayed harvest with higher yield
+- Proposed fix: Disaster event database integration
 
 ---
 
@@ -194,97 +167,68 @@
 | Error Type | Random Forest | XGBoost | DeepFusionNN |
 |------------|---------------|---------|--------------|
 | Spatial bias | +5% Punjab | Balanced | +12% semi-arid |
-| Temporal bias | -8% in 2016 | Balanced | +6% normal years |
+| Temporal bias | −8% in 2016 | Balanced | +6% normal years |
 | Outlier handling | Robust | Very robust | Sensitive (MSE loss) |
-| Drought years | RMSE +15% | RMSE +12% | RMSE +35% |
+| Drought year RMSE | +15% | +12% | +35% |
 
-**Why Deep Learning Fails in Drought Years:**
-- Trained primarily on normal years (6 out of 8 train years)
-- Overfits to normal climate patterns
-- Struggles to extrapolate to extreme conditions
-- **Solution:** Augment training data with synthetic drought scenarios
+DeepFusionNN's drought-year penalty is structural: trained predominantly on normal years, overfits to normal climate patterns.
 
 ---
 
-## Validation Strategy Assessment
+## Validation Strategy
 
-### Temporal Split (What We Did)
-**Train:** 2008-2015 (8 years), **Test:** 2016-2017 (2 years)
+### Implementation: Temporal Split
 
-**Pros:**
-- ✅ Simulates real forecasting (predict future from past)
-- ✅ Catches temporal drift (model struggles in 2016 drought)
+**Train:** 2008–2015 · **Test:** 2016–2017
 
-**Cons:**
-- ⚠️ Test set includes extreme year (2016) → conservative estimate of performance
-- ⚠️ No validation set for hyperparameter tuning without leaking future info
+- Simulates real forecasting scenario
+- Exposes drought vulnerability (hidden in random split)
+- Random split would yield ~20% higher R²
 
-### Alternative: Spatial Cross-Validation (Future Work)
-**Leave-One-State-Out:** Train on 19 states, test on 1 state
+### Spatial Cross-Validation Results
 
-**Expected Result:** R² drops to ~0.65 (from 0.78)  
-**Why:** Model relies on spatial patterns (neighboring districts similar)  
-**Implication:** Current model **won't generalize well to new states without retraining**
+**Approach:** Leave-one-state-out (train on 19 states, test on 1)  
+**Actual result:** R² = 0.71 (mean across 15 states)  
+**Delta from temporal:** −0.07 (temporal R² = 0.78)  
+**Interpretation:** Moderate spatial dependence — model captures transferable crop-climate processes with acceptable generalization to unseen states
+
+*Detailed spatial validation results in [SPATIAL_VALIDATION_RESULTS.md](SPATIAL_VALIDATION_RESULTS.md)*
 
 ---
 
-## Summary Statistics
-
-### Test Set Performance Breakdown
+## Performance Precision
 
 | Metric | Random Forest | XGBoost | DeepFusionNN |
 |--------|---------------|---------|--------------|
-| Max Error | 2,145 kg/ha | 2,089 kg/ha | 2,567 kg/ha |
-| % within ±500 kg/ha | 68% | 69% | 61% |
-| % within ±1000 kg/ha | 89% | 90% | 83% |
+| Max error | 2,145 kg/ha | 2,089 kg/ha | 2,567 kg/ha |
+| Within ±500 kg/ha | 68% | 69% | 61% |
+| Within ±1,000 kg/ha | 89% | 90% | 83% |
 
-**Practical Interpretation:**
-- **68% of predictions within ±500 kg/ha** (~±15% relative error for 3,000 kg/ha yield)
-- **Acceptable for policy planning** (district-level resource allocation)
-- **Not sufficient for farm-level decisions** (individual farmers need ±10% accuracy)
+**Practical interpretation:** ±500 kg/ha ≈ ±15% relative error on 3,000 kg/ha average yield.  
+Sufficient for policy-level resource allocation; insufficient for individual farm-level decisions (require ±10%).
 
 ---
 
-## Documented Improvements
+## Tested Improvements (During Development)
 
-### Tested Improvements (During Development)
+| Change | RMSE Impact |
+|--------|-------------|
+| Add VCI feature | −35 kg/ha |
+| Crop-specific GDD base temps | −28 kg/ha |
+| MVC for NDVI cloud handling | −45 kg/ha |
+| Temporal split vs random split | +120 kg/ha (honest benchmark) |
 
-| Change | Impact on RMSE | Notes |
-|--------|----------------|-------|
-| Add VCI feature | -35 kg/ha | Relative vegetation health vs. NDVI absolute |
-| GDD crop-specific base temps | -28 kg/ha | Wheat T_base=0°C, Rice/Maize T_base=10°C |
-| MVC for NDVI cloud handling | -45 kg/ha | vs. simple mean imputation |
-| Temporal split validation | +120 kg/ha | vs. random split (but more realistic) |
+## Proposed Improvements
 
-### Proposed Future Improvements
-
-| Improvement | Estimated RMSE Reduction | Implementation Complexity |
-|-------------|-------------------------|---------------------------|
-| Monthly climate sequences | -30 to -50 kg/ha | Medium (12× data) |
-| District adjacency features | -20 to -30 kg/ha | Low |
-| Drought year oversampling | -40 kg/ha (drought years only) | Medium |
-| Crop-specific models | -50 kg/ha (maize) | Low |
-| Ensemble stacking | -15 to -25 kg/ha | Medium |
+| Improvement | Estimated Gain | Complexity |
+|-------------|----------------|------------|
+| Monthly climate sequences | −30 to −50 kg/ha overall | Medium |
+| Drought year oversampling | −40 kg/ha drought years | Medium |
+| Crop-specific models | −50 kg/ha for maize | Low |
+| District adjacency features | −20 to −30 kg/ha | Low |
+| Ensemble stacking | −15 to −25 kg/ha | Medium |
 
 ---
 
-## Lessons for Applied ML
-
-### What Worked
-1. **Temporal validation** exposed drought vulnerability (wouldn't catch with random split)
-2. **Feature importance analysis** validated biological interpretability (not overfitting)
-3. **Learning curve analysis** quantified data requirements (5,000+ districts needed)
-4. **Error analysis by region/year/crop** identified actionable improvements
-
-### What Didn't Work
-1. **Annual temporal resolution** lost critical timing information (monthly would be better)
-2. **Treating districts independently** ignored spatial autocorrelation
-3. **Single model for all crops** hurt maize performance (crop-specific needed)
-4. **Deep learning on 7K samples** insufficient for 170K parameters
-
-### Key Takeaway
-**For tabular agricultural data with <10K samples:** Traditional ML (RF, XGBoost) outperforms deep learning in accuracy, training speed, and inference cost. Deep learning only justified when dataset scales to 50K+ samples or when capturing complex temporal/spatial interactions is critical.
-
----
-
-**Related:** [PIPELINE_OVERVIEW.md](PIPELINE_OVERVIEW.md) for data integration methodology
+*See [PIPELINE_OVERVIEW.md](PIPELINE_OVERVIEW.md) for data integration methodology.*  
+*See [TECHNICAL_FAQ.md](TECHNICAL_FAQ.md) for modeling decision rationale.*

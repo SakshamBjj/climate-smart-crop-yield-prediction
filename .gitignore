@@ -1,0 +1,62 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb
+
+# Data - raw source files not committed (require institutional access)
+data/raw/
+data/icrisat/
+*.csv
+*.nc
+*.hdf5
+*.h5
+*.tif
+*.tiff
+
+# Model artifacts - large binaries, regenerate from training
+models/
+*.pkl
+*.joblib
+*.pt
+*.pth
+*.h5
+*.ckpt
+
+# Generated assets - committed intentionally for docs rendering
+# To regenerate: python src/generate_plots.py
+# !assets/*.png
+
+# Internal review documents - not for public repo
+BUG_FIXES_SUMMARY.md
+CROSSOVER_ANALYSIS.md
+FINAL_SIGN_OFF.md
+
+# IDE and OS
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# Logs and temp
+*.log
+tmp/
+temp/
+.cache/
